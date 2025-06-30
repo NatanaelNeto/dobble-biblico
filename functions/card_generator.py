@@ -2,6 +2,7 @@ from PIL import Image
 import random
 
 from functions.utils.image_adjustments import compactar_conteudo, expandir_conteudo
+from functions.utils.image_enhancements import aplicar_sombra, desenhar_texto_inferior
 
 # Tamanho da carta em pixels (300 DPI)
 LARGURA_CARTA_PX = int(2.5 * 300)
@@ -102,6 +103,8 @@ def gerar_imagem_carta(figuras_disponiveis, carta):
             )
 
             if not sobreposicao:
+                sombra = aplicar_sombra(figura_tentativa)
+                imagem.paste(sombra, (x, y), sombra)
                 imagem.paste(figura_tentativa, (x, y), figura_tentativa)
                 posicoes_ocupadas.append(nova_bbox)
                 sucesso = True
@@ -130,6 +133,8 @@ def gerar_imagem_carta(figuras_disponiveis, carta):
                         for bbox in posicoes_ocupadas
                     )
                     if not sobreposicao:
+                        sombra = aplicar_sombra(figura_tentativa)
+                        imagem.paste(sombra, (x, y), sombra)
                         imagem.paste(figura_tentativa, (x, y), figura_tentativa)
                         posicoes_ocupadas.append(nova_bbox)
                         sucesso = True
@@ -153,4 +158,5 @@ def gerar_imagem_carta(figuras_disponiveis, carta):
     # x0, y0, x1, y1 = AREA_UTIL
     # draw.rectangle([x0, y0, x1 - 1, y1 - 1], outline="magenta", width=1)
 
+    desenhar_texto_inferior(imagem, carta["id"])
     return imagem
