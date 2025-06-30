@@ -21,32 +21,36 @@ ESCALA_DECRESCENTE = 0.9
 ESCALA_AJUSTE = 0.6
 MAX_TENTATIVAS = 600
 
-def aplicar_sombra(figura: Image, deslocamento=(5, 5), raio_blur=5, opacidade=20):
-    sombra = Image.new("RGBA", figura.size, (0, 0, 0, 0))
-    sombra_figura = figura.copy()
+def aplicar_sombra(figura: Image, offset=(4, 4), blur_radius=6, cor_sombra=(0, 0, 0, 100)) -> Image:
+    # Cria imagem do tamanho da figura + offset (para acomodar sombra)
+    largura = figura.width + abs(offset[0]) + blur_radius * 2
+    altura = figura.height + abs(offset[1]) + blur_radius * 2
+    base = Image.new("RGBA", (largura, altura), (0, 0, 0, 0))
 
-    # Torna preta com opacidade controlada
-    sombra_data = []
-    for pixel in sombra_figura.getdata():
-        r, g, b, a = pixel
-        sombra_data.append((0, 0, 0, int(opacidade * (a / 255))))  # proporcional à opacidade original
-    sombra_figura.putdata(sombra_data)
+    # Cria a sombra a partir do canal alpha da figura
+    sombra = Image.new("RGBA", figura.size, cor_sombra)
+    alpha = figura.split()[-1]
+    sombra.putalpha(alpha)
 
-    sombra.paste(sombra_figura, (0, 0), sombra_figura)
-    sombra = sombra.filter(ImageFilter.GaussianBlur(radius=raio_blur))
+    # Posição da sombra (deslocada + padding do blur)
+    pos_sombra = (blur_radius + offset[0], blur_radius + offset[1])
+    base.paste(sombra, pos_sombra, sombra)
 
-    # Cria imagem com sombra deslocada
-    imagem_sombra = Image.new("RGBA", (figura.width + deslocamento[0], figura.height + deslocamento[1]), (0, 0, 0, 0))
-    imagem_sombra.paste(sombra, deslocamento, sombra)
+    # Aplica blur para suavizar a sombra
+    base = base.filter(ImageFilter.GaussianBlur(blur_radius))
 
-    return imagem_sombra
+    # Posição da figura (colada acima da sombra, centralizada)
+    pos_figura = (blur_radius, blur_radius)
+    base.paste(figura, pos_figura, figura)
+
+    return base
 
 
 def desenhar_texto_inferior(imagem: Image.Image, numero_carta: int, titulo: str = "Tá Ali!"):
     draw = ImageDraw.Draw(imagem)
     
     try:
-        fonte = ImageFont.truetype("fonts/josefin.ttf", 20)
+        fonte = ImageFont.truetype("fonts/josefin.ttf", 32)
     except:
         fonte = ImageFont.load_default()
 
@@ -56,8 +60,9 @@ def desenhar_texto_inferior(imagem: Image.Image, numero_carta: int, titulo: str 
     margem = 10
 
     # Inferior esquerdo
-    draw.text((AREA_UTIL[0] + margem, AREA_UTIL[3] - 30), texto_esquerda, fill="#333639", font=fonte)
+    draw.text((AREA_UTIL[0] + margem, AREA_UTIL[3] - 30), texto_esquerda, fill="#222428", font=fonte)
 
     # Inferior direito
-    largura_texto, _ = draw.textsize(texto_direita, font=fonte)
-    draw.text((AREA_UTIL[2] - largura_texto - margem, AREA_UTIL[3] - 30), texto_direita, fill="#333639", font=fonte)
+    bbox = fonte.getbbox(texto_direita)
+    largura_texto = bbox[2] - bbox[0]
+    draw.text((AREA_UTIL[2] - largura_texto - margem, AREA_UTIL[3] - 30), texto_direita, fill="#222428", font=fonte)

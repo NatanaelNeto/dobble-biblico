@@ -44,8 +44,17 @@ print("\nCartas lidas do arquivo:")
 for carta in cartas:
     print(f"Carta {carta['id']:02d}: Figuras = {carta['figuras']} | Dominante = {carta['dominante']:02d}")
 
-carta_teste = next((c for c in cartas if c["id"] == 1), None)
-if carta_teste:
-    imagem_carta = gerar_imagem_carta(figuras, carta_teste)
-    imagem_carta.show()  # Abre a imagem em um visualizador
-    imagem_carta.save("carta_01.png")  # Salva como teste
+# carta_teste = next((c for c in cartas if c["id"] == 1), None)
+# if carta_teste:
+#     imagem_carta = gerar_imagem_carta(figuras, carta_teste)
+#     imagem_carta.show()  # Abre a imagem em um visualizador
+#     imagem_carta.save("carta_01.png")  # Salva como teste
+
+def print_cartas(lista):
+    for item in lista:
+        carta = next((c for c in cartas if c["id"] == item), None)
+        if carta:
+            imagem_carta = gerar_imagem_carta(figuras, carta)
+            imagem_carta.save(f"out/carta_{carta["id"]:02d}.png")
+
+print_cartas([6])

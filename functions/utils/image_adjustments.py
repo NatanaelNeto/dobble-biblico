@@ -2,6 +2,7 @@ from PIL import Image
 import random
 
 from functions.utils.get_bounding_box import obter_bounding_box_opaco
+from functions.utils.image_enhancements import aplicar_sombra
 
 # Tamanho da carta em pixels (300 DPI)
 LARGURA_CARTA_PX = int(2.5 * 300)
@@ -84,5 +85,7 @@ def expandir_conteudo(imagem: Image) -> Image:
     offset_y = AREA_UTIL[1] + (altura_util - nova_altura) // 2
 
     nova_imagem = Image.new("RGBA", imagem.size, (255, 255, 255, 255)) # Fundo branco transparente
+    # sombra = aplicar_sombra(imagem)
+    # nova_imagem.paste(sombra, (offset_x, offset_y), sombra)
     nova_imagem.paste(conteudo_redimensionado, (offset_x, offset_y), conteudo_redimensionado)
     return nova_imagem

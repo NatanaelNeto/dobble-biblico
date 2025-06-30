@@ -19,13 +19,14 @@ AREA_UTIL = (
 
 # Tamanho relativo da figura dominante e das demais
 ESCALA_DOMINANTE = 1.0
-ESCALA_NORMAL = 0.6
+ESCALA_NORMAL = 0.65
 ESCALA_MINIMA = 0.2
 ESCALA_DECRESCENTE = 0.9
-ESCALA_AJUSTE = 0.6
+ESCALA_AJUSTE = 0.65
 MAX_TENTATIVAS = 600
 
 def gerar_imagem_carta(figuras_disponiveis, carta):
+    print(f"Imprimindo carta {carta["id"]}...")
     imagem = Image.new("RGBA", (LARGURA_CARTA_PX, ALTURA_CARTA_PX), (255, 255, 255, 0))
     posicoes_ocupadas = []
 
@@ -60,11 +61,11 @@ def gerar_imagem_carta(figuras_disponiveis, carta):
         while not sucesso and escala >= ESCALA_MINIMA and tentativas < MAX_TENTATIVAS:
             tentativas += 1
 
-            figura_tentativa = imagem_original.resize(
+            figura_tentativa = imagem_original.rotate(random.randint(0, 90), resample=Image.BICUBIC, expand=True).resize(
                 (int(imagem_original.width * escala * ESCALA_AJUSTE),
                  int(imagem_original.height * escala * ESCALA_AJUSTE)),
                 Image.LANCZOS
-            ).rotate(random.randint(0, 90), expand=True)
+            )
 
             alpha_tentativa = figura_tentativa.split()[-1]
             bbox_alpha = alpha_tentativa.getbbox()
@@ -105,7 +106,7 @@ def gerar_imagem_carta(figuras_disponiveis, carta):
             if not sobreposicao:
                 sombra = aplicar_sombra(figura_tentativa)
                 imagem.paste(sombra, (x, y), sombra)
-                imagem.paste(figura_tentativa, (x, y), figura_tentativa)
+                # imagem.paste(figura_tentativa, (x, y), figura_tentativa)
                 posicoes_ocupadas.append(nova_bbox)
                 sucesso = True
                 break
@@ -113,7 +114,7 @@ def gerar_imagem_carta(figuras_disponiveis, carta):
         # Se falhar, compacta o que já foi colocado e faz varredura final
         if not sucesso:
             print(f"Iniciando varredura da figura {numero:02d}")
-            imagem = compactar_conteudo(imagem)
+            # imagem = compactar_conteudo(imagem)
             passo = 10  # px
             for y in range(AREA_UTIL[1], AREA_UTIL[3], passo):
                 for x in range(AREA_UTIL[0], AREA_UTIL[2], passo):
@@ -135,7 +136,7 @@ def gerar_imagem_carta(figuras_disponiveis, carta):
                     if not sobreposicao:
                         sombra = aplicar_sombra(figura_tentativa)
                         imagem.paste(sombra, (x, y), sombra)
-                        imagem.paste(figura_tentativa, (x, y), figura_tentativa)
+                        # imagem.paste(figura_tentativa, (x, y), figura_tentativa)
                         posicoes_ocupadas.append(nova_bbox)
                         sucesso = True
                         break
@@ -157,6 +158,5 @@ def gerar_imagem_carta(figuras_disponiveis, carta):
     # draw = ImageDraw.Draw(imagem)
     # x0, y0, x1, y1 = AREA_UTIL
     # draw.rectangle([x0, y0, x1 - 1, y1 - 1], outline="magenta", width=1)
-
     desenhar_texto_inferior(imagem, carta["id"])
     return imagem
