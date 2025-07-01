@@ -50,7 +50,7 @@ def desenhar_texto_inferior(imagem: Image.Image, numero_carta: int, titulo: str 
     draw = ImageDraw.Draw(imagem)
     
     try:
-        fonte = ImageFont.truetype("fonts/josefin.ttf", 32)
+        fonte = ImageFont.truetype("fonts/oldenburg.ttf", 24)
     except:
         fonte = ImageFont.load_default()
 
