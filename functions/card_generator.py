@@ -34,7 +34,17 @@ def gerar_imagem_carta(figuras_disponiveis, carta):
     # x0, y0, x1, y1 = AREA_UTIL
     # draw.rectangle([x0, y0, x1 - 1, y1 - 1], fill=(0, 255, 255, 80))  # Ciano translúcido
 
-    for numero in carta["figuras"]:
+    figuras_a_processar = list(carta["figuras"])
+    numero_dominante = carta["dominante"]
+    if numero_dominante in figuras_a_processar:
+        figuras_a_processar.remove(numero_dominante)
+        # Insere a figura dominante no início da lista para ser processada primeiro
+        figuras_a_processar.insert(0, numero_dominante)
+    else:
+        print(f"⚠️ Figura dominante {numero_dominante:02d} não encontrada na lista de figuras da carta. Processando todas as figuras normalmente.")
+
+
+    for numero in figuras_a_processar:
         figura_info = next((f for f in figuras_disponiveis if f["numero"] == numero), None)
         if not figura_info:
             print(f"Figura {numero:02d} não encontrada. Pulando...")
