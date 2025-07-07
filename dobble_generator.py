@@ -55,6 +55,6 @@ def print_cartas(lista):
         carta = next((c for c in cartas if c["id"] == item), None)
         if carta:
             imagem_carta = gerar_imagem_carta(figuras, carta)
-            imagem_carta.save(f"out/carta_{carta["id"]:02d}.png")
+            imagem_carta.save(f"carta_{carta["id"]:02d}.png")
 
-print_cartas([23,24])
+print_cartas([1])
