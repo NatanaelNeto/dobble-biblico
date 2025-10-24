@@ -21,7 +21,7 @@ ESCALA_DECRESCENTE = 0.9
 ESCALA_AJUSTE = 0.6
 MAX_TENTATIVAS = 600
 
-def aplicar_sombra(figura: Image, offset=(4, 4), blur_radius=6, cor_sombra=(0, 0, 0, 100)) -> Image:
+def aplicar_sombra(figura: Image, offset=(4, 4), blur_radius=6, cor_sombra=(0, 0, 0, 50)) -> Image:
     # Cria imagem do tamanho da figura + offset (para acomodar sombra)
     largura = figura.width + abs(offset[0]) + blur_radius * 2
     altura = figura.height + abs(offset[1]) + blur_radius * 2

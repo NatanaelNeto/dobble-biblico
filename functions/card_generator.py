@@ -1,4 +1,4 @@
-from PIL import Image
+from PIL import Image, ImageOps
 import random
 
 from functions.utils.image_adjustments import compactar_conteudo, expandir_conteudo
@@ -25,9 +25,10 @@ ESCALA_DECRESCENTE = 0.9
 ESCALA_AJUSTE = 0.65
 MAX_TENTATIVAS = 600
 
-def gerar_imagem_carta(figuras_disponiveis, carta):
+def gerar_imagem_carta(figuras_disponiveis, carta, base_path="01_base.png"):
     print(f"Imprimindo carta {carta["id"]}...")
     imagem = Image.new("RGBA", (LARGURA_CARTA_PX, ALTURA_CARTA_PX), (255, 255, 255, 0))
+
     posicoes_ocupadas = []
 
     # draw = ImageDraw.Draw(imagem)
@@ -164,9 +165,21 @@ def gerar_imagem_carta(figuras_disponiveis, carta):
     # imagem.save("pre2.png")
     imagem = expandir_conteudo(imagem)
 
+    
+    try:
+        base = Image.open(base_path).convert("RGBA")
+    except FileNotFoundError:
+        print(f"⚠️ Base '{base_path}' não encontrada.")
+    else:
+        # Ajusta a base para preencher exatamente as dimensões da carta.
+        # ImageOps.fit redimensiona e corta centralmente (modo 'cover').
+        # if base.size != (LARGURA_CARTA_PX, ALTURA_CARTA_PX):
+        #     base = ImageOps.fit(base, (LARGURA_CARTA_PX, ALTURA_CARTA_PX), method=Image.LANCZOS)
+        imagem.paste(base, (0, 0), base)  # vamos desenhar sobre 'imagem'
+
     # Desenho do limite (debug visual)
     # draw = ImageDraw.Draw(imagem)
     # x0, y0, x1, y1 = AREA_UTIL
     # draw.rectangle([x0, y0, x1 - 1, y1 - 1], outline="magenta", width=1)
-    desenhar_texto_inferior(imagem, carta["id"])
+    # desenhar_texto_inferior(imagem, carta["id"])
     return imagem

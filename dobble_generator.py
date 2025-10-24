@@ -5,8 +5,8 @@ from functions.card_generator import gerar_imagem_carta
 from functions.read_card_file import ler_cartas_do_arquivo
 
 # Caminho da pasta com as figuras
-PASTA_FIGURAS = "figuras"
-PASTA_SAIDA = "out"
+PASTA_FIGURAS = "figuras_2"
+PASTA_SAIDA = "out_2"
 
 # Regex para capturar número e nome da figura no padrão: "01_nome-da-figura.png"
 PADRAO_ARQUIVO = re.compile(r"(\d{2})_(.+)\.png")
@@ -55,6 +55,6 @@ def print_cartas(lista):
         carta = next((c for c in cartas if c["id"] == item), None)
         if carta:
             imagem_carta = gerar_imagem_carta(figuras, carta)
-            imagem_carta.save(f"out/carta_{carta["id"]:02d}.png")
+            imagem_carta.save(f"{PASTA_SAIDA}/carta_{carta["id"]:02d}.png")
 
-print_cartas([23,24])
+print_cartas([11, 13, 15])
