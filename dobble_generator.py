@@ -57,4 +57,4 @@ def print_cartas(lista):
             imagem_carta = gerar_imagem_carta(figuras, carta)
             imagem_carta.save(f"{PASTA_SAIDA}/carta_{carta["id"]:02d}.png")
 
-print_cartas([11, 13, 15])
+print_cartas([22, 23, 26, 27, 28, 29, 30, 31])
